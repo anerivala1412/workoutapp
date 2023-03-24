@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const cookieSession = require("cookie-session");
-
+const session = require('express-session');
 const dbConfig = require("./app/config/db.config");
 const passport = require('passport');
 const app = express();
@@ -22,14 +21,22 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customC
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
-
-app.use(
-    cookieSession({
-        name: 'google-auth-session',
-        secret: "COOKIE_SECRET", // should use as secret environment variable
-        httpOnly: true
-    })
-);
+app.use(session({
+    resave: false,
+    saveUninitialized: true,
+    secret: 'SECRET'
+}, {
+    name: 'google-auth-session',
+    secret: "COOKIE_SECRET", // should use as secret environment variable
+    httpOnly: true
+}));
+// app.use(
+//     cookieSession({
+//         name: 'google-auth-session',
+//         secret: "COOKIE_SECRET", // should use as secret environment variable
+//         httpOnly: true
+//     })
+// );
 app.use(passport.initialize());
 app.use(passport.session());
 const db = require("./app/models");
