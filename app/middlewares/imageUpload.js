@@ -1,34 +1,37 @@
-var fs = require('fs');
-const AWS = require('aws-sdk');
-// const s3 = new AWS.S3();
-AWS.config.update({ region: 'us-east-1' });
-const mime = require('mime');
+const aws = require("aws-sdk");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
 
-const BUCKET_NAME = 'my-bucket-name';
+const s3 = new aws.S3();
 
-let filepath = '/home/user/test-image.jpeg';
+aws.config.update({
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_ACCESS_SECRET,
+    region: process.env.S3_ORIGIN,
+});
 
-const content = fs.readFileSync(filepath);
-console.log(mime.getType(filepath));
-
-let params = {
-    params: {
-        Bucket: BUCKET_NAME,
-        Key: 'cancel.jpeg',
-        Body: content,
-        ContentType: mime.getType(filepath),
-    },
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+        cb(null, true);
+    } else {
+        cb(new Error("Invalid file type, only JPEG and PNG is allowed!"), false);
+    }
 };
 
-var upload = new AWS.S3.ManagedUpload(params);
+const upload = multer({
+    fileFilter,
+    storage: multerS3({
+        acl: "public-read",
+        s3,
+        bucket: process.env.S3_ORIGIN,
+        metadata: function(req, file, cb) {
+            console.log({ output: req })
+            cb(null, { fieldName: "TESTING_METADATA" });
+        },
+        key: function(req, file, cb) {
+            cb(null, Date.now().toString());
+        },
+    }),
+});
 
-var promise = upload.promise();
-
-promise.then(
-    function(data) {
-        console.log('Successfully uploaded photo.');
-    },
-    function(err) {
-        console.error('There was an error uploading: ', err.message);
-    }
-);
+module.exports = upload;
