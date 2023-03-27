@@ -41,19 +41,19 @@ module.exports = function(app) {
         controller.adminBoard
     );
     app.post("/:id/add-profile-picture", upload.single("image"), function(req, res) {
-        uploadParams.Key = req.file.originalname;
-        uploadParams.Body = fs.createReadStream(req.file.path),
-            console.log({ uploadParams })
-        s3Client.upload(uploadParams, (err, data) => {
-            if (err) {
-                res.status(500).json({ error: "Error -> " + err });
-            }
-            res.json({
-                message: 'File uploaded successfully',
-                'filename': req.file.originalname,
-                'location': data.Location
-            });
-        });
+        // uploadParams.Key = req.file.originalname;
+        // uploadParams.Body = fs.createReadStream(req.file.path),
+        //     console.log({ uploadParams })
+        // s3Client.upload(uploadParams, (err, data) => {
+        //     if (err) {
+        //         res.status(500).json({ error: "Error -> " + err });
+        //     }
+        //     res.json({
+        //         message: 'File uploaded successfully',
+        //         'filename': req.file.originalname,
+        //         'location': data.Location
+        //     });
+        // });
 
         // singleUpload(req, res, function(err) {
         //     // Read content from the file
