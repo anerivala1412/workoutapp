@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const session = require('express-session');
 const dbConfig = require("./app/config/db.config");
+require('dotenv').config();
 const passport = require('passport');
 const app = express();
 
@@ -44,13 +45,13 @@ const db = require("./app/models");
 const Role = db.role;
 
 db.mongoose
-    .connect(`mongodb://0.0.0.0:27017/fterobic`, {
+    .connect(`${process.env.DB_URL_DEVELOPEMENT}`, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
     .then(() => {
         console.log("Successfully connect to MongoDB....");
-        //    initial();
+        //  roleCedar();
     })
     .catch(err => {
         console.log({ err }, "error")
@@ -62,6 +63,7 @@ db.mongoose
 // routes
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
+require("./app/routes/category.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
@@ -69,7 +71,7 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
 });
 
-function initial() {
+function roleCedar() {
     Role.estimatedDocumentCount((err, count) => {
         if (!err && count === 0) {
             new Role({

@@ -1,3 +1,3 @@
 module.exports = {
-    secret: "fterobic-secret-key"
+    secret: "fterobic-secret-key",
 };

@@ -1,4 +1,5 @@
 const config = require("../config/auth.config");
+require('dotenv').config();
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
@@ -62,8 +63,6 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-
-    console.log({ body: req.body })
     User.findOne({
             username: req.body.username,
         })
@@ -92,7 +91,7 @@ exports.signin = (req, res) => {
             });
 
             var authorities = [];
-
+            console.log(user.roles)
             for (let i = 0; i < user.roles.length; i++) {
                 authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
             }
@@ -104,10 +103,10 @@ exports.signin = (req, res) => {
                 username: user.username,
                 email: user.email,
                 roles: authorities,
+                token
             });
         });
 };
-
 
 exports.socialSignIn = async(user) => {
     const { _json: userInfo, } = user

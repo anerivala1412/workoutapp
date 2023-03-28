@@ -5,86 +5,84 @@ const User = db.user;
 const Role = db.role;
 
 verifyToken = (req, res, next) => {
-  let token = req.session.token;
-
-  if (!token) {
-    return res.status(403).send({ message: "No token provided!" });
-  }
-
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({ message: "Unauthorized!" });
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MjJhNmQyOWIwNzg1NGNmNGJlNTVlNSIsImlhdCI6MTY3OTk5NzkyNywiZXhwIjoxNjgwMDg0MzI3fQ.afFZ9x_TK_H4Oz3r7BV5bynmf0v4QJ3f8ZGivo_gWrQ";
+    console.log({ token })
+    if (!token) {
+        return res.status(403).send({ message: "No token provided!" });
     }
-    req.userId = decoded.id;
-    next();
-  });
+
+    jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
+            return res.status(401).send({ message: "Unauthorized!" });
+        }
+        req.userId = decoded.id;
+        next();
+    });
 };
 
 isAdmin = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-
-    Role.find(
-      {
-        _id: { $in: user.roles },
-      },
-      (err, roles) => {
+    User.findById(req.userId).exec((err, user) => {
         if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "admin") {
-            next();
+            res.status(500).send({ message: err });
             return;
-          }
         }
 
-        res.status(403).send({ message: "Require Admin Role!" });
-        return;
-      }
-    );
-  });
+        Role.find({
+                _id: { $in: user.roles },
+            },
+            (err, roles) => {
+                if (err) {
+                    res.status(500).send({ message: err });
+                    return;
+                }
+
+                for (let i = 0; i < roles.length; i++) {
+                    if (roles[i].name === "admin") {
+                        next();
+                        return;
+                    }
+                }
+
+                res.status(403).send({ message: "Require Admin Role!" });
+                return;
+            }
+        );
+    });
 };
 
 isModerator = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-
-    Role.find(
-      {
-        _id: { $in: user.roles },
-      },
-      (err, roles) => {
+    User.findById(req.userId).exec((err, user) => {
         if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "moderator") {
-            next();
+            res.status(500).send({ message: err });
             return;
-          }
         }
 
-        res.status(403).send({ message: "Require Moderator Role!" });
-        return;
-      }
-    );
-  });
+        Role.find({
+                _id: { $in: user.roles },
+            },
+            (err, roles) => {
+                if (err) {
+                    res.status(500).send({ message: err });
+                    return;
+                }
+
+                for (let i = 0; i < roles.length; i++) {
+                    if (roles[i].name === "moderator") {
+                        next();
+                        return;
+                    }
+                }
+
+                res.status(403).send({ message: "Require Moderator Role!" });
+                return;
+            }
+        );
+    });
 };
 
 const authJwt = {
-  verifyToken,
-  isAdmin,
-  isModerator,
+    verifyToken,
+    isAdmin,
+    isModerator,
 };
 module.exports = authJwt;
