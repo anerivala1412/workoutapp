@@ -1,4 +1,5 @@
 const { ObjectId } = require("mongodb");
+const BaseService = require("../core/base.service");
 const db = require("../models");
 const Session = db.Session
 exports.addSession = (req, res) => {
@@ -65,11 +66,17 @@ exports.getSession = (req, res) => {
 
 exports.getSessionList = async(req, res) => {
     let query = []
+    let { page, size } = req.query
+    if (!page) page = 1;
+    if (!size) size = 10;
+    const limit = parseInt(size)
+    const skip = BaseService.getSkipValue(limit, page)
     if (req.query && req.query.bodyType) {
         query.push({ $match: { bodyType: req.query.bodyType } });
     }
-    query.push({ $sort: { order: 1 } })
-    query.push({ $limit: 10 });
+    query.push({ "$sort": { "order": -1 } })
+    query.push({ "$skip": skip })
+    query.push({ "$limit": limit })
     const items = await Session.aggregate(query);
     return res.status(200).send({
         items,

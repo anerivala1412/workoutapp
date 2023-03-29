@@ -31,7 +31,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/session/", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/session/", [],
         controller.getSessionList
     );
 
