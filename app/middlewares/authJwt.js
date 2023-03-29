@@ -5,8 +5,7 @@ const User = db.user;
 const Role = db.role;
 
 verifyToken = (req, res, next) => {
-    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MjJhNmQyOWIwNzg1NGNmNGJlNTVlNSIsImlhdCI6MTY3OTk5NzkyNywiZXhwIjoxNjgwMDg0MzI3fQ.afFZ9x_TK_H4Oz3r7BV5bynmf0v4QJ3f8ZGivo_gWrQ";
-    console.log({ token })
+    let token = req.session.token;
     if (!token) {
         return res.status(403).send({ message: "No token provided!" });
     }
