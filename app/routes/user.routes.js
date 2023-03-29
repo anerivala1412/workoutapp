@@ -1,9 +1,10 @@
 require('dotenv').config();
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/user.controller");
-const upload = require("../middlewares/imageUpload");
-const singleUpload = upload.single('image');
+const mediaUpload = require("../middlewares/media");
+const singleImageUpload = mediaUpload.imageUpload.single('image');
 
+const singleVideoUpload = mediaUpload.videoUpload.single('video');
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -29,12 +30,22 @@ module.exports = function(app) {
 
     //image-upload end-point
     app.post('/:id/add-profile-picture', function(req, res) {
-        singleUpload(req, res, function(err, some) {
+        singleImageUpload(req, res, function(err, some) {
             if (err) {
                 return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
             }
 
-            return res.json({ 'imageUrl': req.file.location });
+            return res.json({ 'imageUrl': req.file.key });
+        });
+    });
+
+    //video-upload end-point
+    app.post('/:id/add-profile-video', function(req, res) {
+        singleVideoUpload(req, res, function(err, some) {
+            if (err) {
+                return res.status(422).send({ errors: [{ title: 'video Upload Error', detail: err.message }] });
+            }
+            return res.json({ 'videoUrl': req.file.key });
         });
     });
 };

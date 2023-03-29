@@ -91,7 +91,6 @@ exports.signin = (req, res) => {
             });
 
             var authorities = [];
-            console.log(user.roles)
             for (let i = 0; i < user.roles.length; i++) {
                 authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
             }

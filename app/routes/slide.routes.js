@@ -12,27 +12,27 @@ module.exports = function(app) {
 
     app.post(
         "/api/slide", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.addSubCategory
+        controller.addSlide
     );
 
     app.put(
         "/api/slide/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateSubCategory
+        controller.updateSlide
     );
 
     app.get(
         "/api/slide/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateSubCategory
+        controller.updateSlide
     );
 
     app.delete(
         "/api/slide/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateSubCategory
+        controller.updateSlide
     );
 
     app.get(
         "/api/slide/", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.getSubCategoryList
+        controller.getSlideList
     );
 
 };
