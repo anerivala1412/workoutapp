@@ -6,6 +6,8 @@ const SubCategory = mongoose.model(
         title: String,
         order: Number,
         image: String,
+    }, {
+        timestamps: true
     })
 );
 

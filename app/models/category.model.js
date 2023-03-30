@@ -12,6 +12,8 @@ const Category = mongoose.model(
         //     default: 'ALL'
         // },
 
+    }, {
+        timestamps: true
     })
 );
 

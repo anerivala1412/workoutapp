@@ -11,7 +11,8 @@ const Slide = mongoose.model(
         //     enum: ['Full', 'Upper', "Lower", "ALL"],
         //     default: 'ALL'
         // },
-
+    }, {
+        timestamps: true
     })
 );
 

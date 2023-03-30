@@ -20,7 +20,9 @@ const Session = mongoose.model(
         tumbnail: String,
         order: Number,
         videoUrl: String,
-        image: String
+        image: String,
+    }, {
+        timestamps: true
     })
 );
 
