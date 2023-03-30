@@ -9,6 +9,11 @@ const Meal = mongoose.model(
         carbs: Number,
         fat: Number,
         proteine: Number,
+        mealType: {
+            type: String,
+            enum: ['Breakfast', 'Lunch', "Dinner", "Snacks"],
+            default: 'Snacks'
+        },
         ingredients: [],
         user: {
             type: mongoose.Schema.Types.ObjectId,

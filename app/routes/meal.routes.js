@@ -11,22 +11,22 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/meal", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/meal", [authJwt.verifyToken, authJwt.isUser],
         controller.addMeal
     );
 
     app.get(
-        "/api/meal/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/meal/:id", [authJwt.verifyToken, authJwt.isAdmin, authJwt.isUser],
         controller.updateMeal
     );
 
     app.delete(
-        "/api/meal/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/meal/:id", [authJwt.verifyToken, authJwt.isAdmin, authJwt.isUser],
         controller.updateMeal
     );
 
     app.get(
-        "/api/meal/", [authJwt.verifyToken, authJwt.isAdmin, authJwt.isUser],
+        "/api/meal/", [authJwt.verifyToken, authJwt.isUser],
         controller.getMealList
     );
 

@@ -12,7 +12,7 @@ db.SubCategory = require("./sub-category.model");
 
 db.slide = require("./slide.model");
 db.Session = require("./session.model");
-
+db.Meal = require('./meal.model');
 
 db.ROLES = ["user", "admin", "moderator"];
 
