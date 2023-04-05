@@ -27,7 +27,7 @@ module.exports = function(app) {
 
     app.delete(
         "/api/category/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateCategory
+        controller.deleteCategory
     );
 
     app.get(

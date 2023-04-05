@@ -42,7 +42,7 @@ exports.deleteCategory = (req, res) => {
                 return;
             }
             return res.status(200).send({
-                ...catgory
+                message: "deleted"
             });
         })
 }

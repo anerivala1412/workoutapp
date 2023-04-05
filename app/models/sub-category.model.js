@@ -6,6 +6,11 @@ const SubCategory = mongoose.model(
         title: String,
         order: Number,
         image: String,
+        parentCategory: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category"
+        },
+
     }, {
         timestamps: true
     })

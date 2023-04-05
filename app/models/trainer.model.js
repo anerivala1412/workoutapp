@@ -14,6 +14,10 @@ const Trainer = mongoose.model(
         activeClient: Number,
         bio: String,
         phonenNumber: String,
+        category: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category"
+        }],
 
     }, {
         timestamps: true

@@ -12,27 +12,27 @@ module.exports = function(app) {
 
     app.post(
         "/api/training", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.addTrainer
+        controller.addTraining
     );
 
     app.put(
         "/api/training/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateTrainer
+        controller.updateTraining
     );
 
     app.get(
         "/api/training/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateTrainer
+        controller.updateTraining
     );
 
     app.delete(
         "/api/training/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateTrainer
+        controller.updateTraining
     );
 
     app.get(
         "/api/training/", [authJwt.verifyToken, authJwt.isUser],
-        controller.getTrainerList
+        controller.getTrainingList
     );
 
 };

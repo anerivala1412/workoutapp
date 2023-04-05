@@ -21,7 +21,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/session/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/session/:id", [authJwt.verifyToken],
         controller.updateSession
     );
 
