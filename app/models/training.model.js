@@ -21,5 +21,4 @@ const Training = mongoose.model(
         timestamps: true
     })
 );
-
 module.exports = Training;

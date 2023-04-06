@@ -35,4 +35,9 @@ module.exports = function(app) {
         controller.getTrainingList
     );
 
+    app.get(
+        "/api/workout-trainers", [],
+        controller.searchWorkoutTrainer
+    );
+
 };

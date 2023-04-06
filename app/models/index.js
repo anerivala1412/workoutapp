@@ -15,6 +15,7 @@ db.Session = require("./session.model");
 db.Meal = require('./meal.model');
 db.Trainer = require('./trainer.model')
 db.Training = require('./training.model')
+db.Coupon = require('./coupon.model')
 
 db.ROLES = ["user", "admin", "moderator"];
 

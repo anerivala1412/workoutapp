@@ -31,7 +31,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/trainer/", [authJwt.verifyToken, authJwt.isUser],
+        "/api/trainer/", [authJwt.verifyToken],
         controller.getTrainerList
     );
 
