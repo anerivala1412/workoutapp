@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
-const Slide = mongoose.model(
-    "Slide",
+const EStore = mongoose.model(
+    "EStore",
     new mongoose.Schema({
         title: String,
+        description: String,
         order: Number,
         image: String,
     }, {
@@ -11,4 +12,4 @@ const Slide = mongoose.model(
     })
 );
 
-module.exports = Slide;
+module.exports = EStore;

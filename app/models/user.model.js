@@ -11,6 +11,10 @@ const User = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Role"
         }],
+        coin: {
+            type: Number,
+            default: 0
+        }
 
     }, {
         timestamps: true

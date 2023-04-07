@@ -21,7 +21,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/trainer/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/trainer/:id", [authJwt.verifyToken],
         controller.updateTrainer
     );
 

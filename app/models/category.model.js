@@ -6,12 +6,6 @@ const Category = mongoose.model(
         title: String,
         order: Number,
         image: String,
-        // bodyType: {
-        //     type: String,
-        //     enum: ['Full', 'Upper', "Lower", "ALL"],
-        //     default: 'ALL'
-        // },
-
     }, {
         timestamps: true
     })

@@ -70,6 +70,10 @@ require("./app/routes/session.routes")(app);
 require("./app/routes/meal.routes")(app);
 require("./app/routes/trainer.routes")(app);
 require("./app/routes/training.routes")(app);
+require("./app/routes/e-store.routes")(app);
+require("./app/routes/activity.routes")(app);
+require("./app/routes/experience.routes")(app);
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
