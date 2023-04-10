@@ -31,8 +31,13 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/training/", [authJwt.verifyToken, authJwt.isUser],
+        "/api/training/", [authJwt.verifyToken],
         controller.getTrainingList
+    );
+
+    app.get(
+        "/api/workout-trainers", [authJwt.verifyToken],
+        controller.searchWorkoutTrainer
     );
 
 };

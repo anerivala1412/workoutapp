@@ -1,103 +1,81 @@
 const { ObjectId } = require("mongodb");
-const db = require("../models");
-const Trainer = require("../models/trainer.model");
 const BaseService = require("../core/base.service");
-const Training = db.Training;
-exports.addTraining = (req, res) => {
+const db = require("../models");
+const Experience = db.Experience
+exports.addExperience = (req, res) => {
     const requestObj = req.body;
-    const trainingInfo = new Training(requestObj);
+    const categoryInfo = new Experience(requestObj);
 
-    trainingInfo.save((err, training) => {
+    categoryInfo.save((err, Experience) => {
         if (err) {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "Training created successfully!" });;
+        return res.send({ message: "Experience created successfully!" });;
     });
 };
 
-exports.updateTraining = (req, res) => {
+exports.updateExperience = (req, res) => {
     const requestObj = req.body;
     const id = req.params.id;
-    Training.findOneAndUpdate({
+    Experience.findOneAndUpdate({
             _id: new ObjectId(id)
         }, {...requestObj }, { upsert: true })
-        .exec((err, training) => {
+        .exec((err, experience) => {
             if (err) {
                 res.status(500).send({ message: err });
                 return;
             }
             return res.status(200).send({
-                ...training._doc
+                ...experience
             });
         })
 }
 
-exports.deleteTraining = (req, res) => {
+exports.deleteExperience = (req, res) => {
     const id = req.params.id;
-    Training.findByIdAndDelete({
+    Experience.findByIdAndDelete({
             _id: new ObjectId(id)
         })
-        .exec((err, training) => {
+        .exec((err, experience) => {
             if (err) {
                 res.status(500).send({ message: err });
                 return;
             }
             return res.status(200).send({
-                ...training
+                ...experience
             });
         })
 }
 
-exports.getTraining = (req, res) => {
+exports.getExperience = (req, res) => {
     const id = req.params.id;
-    Training.findById({
+    Experience.findById({
             _id: new ObjectId(id)
         })
-        .exec((err, training) => {
+        .exec((err, experience) => {
             if (err) {
                 res.status(500).send({ message: err });
                 return;
             }
             return res.status(200).send({
-                ...training
+                ...experience
             });
         })
 }
 
-exports.getTrainingList = async(req, res) => {
-    const items = await Training.find().populate('categories');
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
-}
-
-exports.getTrainingAndTrainerList = async(req, res) => {
-    const items = await Training.find().populate('categories');
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
-
-}
-
-exports.searchWorkoutTrainer = async(req, res) => {
+exports.getExperienceList = async(req, res) => {
     let query = []
     let { page, size } = req.query
     if (!page) page = 1;
     if (!size) size = 10;
     const limit = parseInt(size)
     const skip = BaseService.getSkipValue(limit, page)
-    if (req.query && req.query.name) {
-        query.push({ $match: { $text: { $search: req.query.name } } }, );
-    }
+
     query.push({ "$sort": { "order": -1 } })
     query.push({ "$skip": skip })
     query.push({ "$limit": limit })
-    const trainingItems = await Training.aggregate(query);
-    const trainerItems = await Trainer.aggregate(query);
-    const items = [...trainingItems, ...trainerItems]
+    const items = await Experience.aggregate(query);
     return res.status(200).send({
         items,
         total: items.length

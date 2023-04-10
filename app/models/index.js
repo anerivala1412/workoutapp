@@ -15,7 +15,9 @@ db.Session = require("./session.model");
 db.Meal = require('./meal.model');
 db.Trainer = require('./trainer.model')
 db.Training = require('./training.model')
-
+db.EStore = require('./e-store.model')
+db.Activity = require('./activity.model')
+db.Experience = require('./experience.model')
 db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

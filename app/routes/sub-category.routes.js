@@ -21,7 +21,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/sub-category/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/sub-category/:id", [authJwt.verifyToken],
         controller.updateSubCategory
     );
 
@@ -31,7 +31,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/sub-category/", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/sub-category/", [authJwt.verifyToken],
         controller.getSubCategoryList
     );
 

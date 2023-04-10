@@ -21,7 +21,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/category/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/category/:id", [authJwt.verifyToken],
         controller.updateCategory
     );
 
@@ -31,7 +31,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/category/", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/category/", [authJwt.verifyToken],
         controller.getCategoryList
     );
 

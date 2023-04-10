@@ -21,7 +21,7 @@ module.exports = function(app) {
     );
 
     app.get(
-        "/api/slide/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/slide/:id", [authJwt.verifyToken],
         controller.updateSlide
     );
 
