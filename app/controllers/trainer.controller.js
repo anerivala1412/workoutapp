@@ -70,3 +70,35 @@ exports.getTrainerList = async(req, res) => {
         total: items.length
     });
 }
+
+exports.getTrainerByCategory = async() => {
+    let query = []
+        // query.push({ $match: { user: new ObjectId(req.userId) } });
+        // query.push({
+        //     $group: {
+        //         _id: {
+        //             mealType: "$mealType",
+        //             name: "$name",
+        //             user: new ObjectId(req.userId)
+        //         },
+        //         total: { $sum: 1 }
+        //     }
+        // });
+        // query.push({
+        //     $group: {
+        //         _id: "$_id.mealType",
+        //         meals: {
+        //             $push: {
+        //                 name: "$_id.name",
+        //                 total: "$total"
+        //             }
+        //         }
+        //     }
+        // });
+    query.push({ "$sort": { "createdAt": -1 } });
+
+    return res.status(200).send({
+        items,
+        total: items.length
+    });
+}

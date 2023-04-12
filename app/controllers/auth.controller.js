@@ -6,8 +6,14 @@ const Role = db.role;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+const { validateEmail } = require("../core/base.service");
 
-exports.signup = (req, res) => {
+exports.signup = async(req, res) => {
+
+    const isValid = await validateEmail(req.body.email);
+    if (!isValid) {
+        return res.send({ message: "Check your requested Email" });
+    }
     const user = new User({
         username: req.body.username,
         email: req.body.email,
