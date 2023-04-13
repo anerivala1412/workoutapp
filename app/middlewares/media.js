@@ -29,8 +29,9 @@ const imageUpload = multer({
         key: function(req, file, cb) {
             // Figure out a unique filename
             var ext = file.originalname.split('.').pop();
-            var random = Math.floor(Math.random() * 900000000000000000);
-            const filename = random + '.' + ext;
+            // var random = Math.floor(Math.random() * 900000000000000000);
+            var uniqueV = `image-${Date.now()}`
+            const filename = uniqueV + '.' + ext;
             cb(null, filename); //use Date.now() for unique file keys
         }
     }),

@@ -71,7 +71,7 @@ exports.getTrainerList = async(req, res) => {
     });
 }
 
-exports.getTrainerByCategory = async() => {
+exports.getTrainerByCategory = async(req, res) => {
     let query = []
         // query.push({ $match: { user: new ObjectId(req.userId) } });
         // query.push({

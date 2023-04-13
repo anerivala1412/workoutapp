@@ -84,19 +84,28 @@ exports.getTrainingAndTrainerList = async(req, res) => {
 
 exports.searchWorkoutTrainer = async(req, res) => {
     let query = []
+    let trainerQuery = []
+    let trainingQuery = []
     let { page, size } = req.query
     if (!page) page = 1;
     if (!size) size = 10;
     const limit = parseInt(size)
     const skip = BaseService.getSkipValue(limit, page)
-    if (req.query && req.query.name) {
-        query.push({ $match: { $text: { $search: req.query.name } } }, );
-    }
+    
     query.push({ "$sort": { "order": -1 } })
     query.push({ "$skip": skip })
     query.push({ "$limit": limit })
-    const trainingItems = await Training.aggregate(query);
-    const trainerItems = await Trainer.aggregate(query);
+
+    //querry for the trainers collection
+    if (req.query && req.query.name) {
+        trainerQuery.push({$match: { name: { $regex: req.query.name, $options: "i" } } }, );
+    }
+    const trainerItems = await Trainer.aggregate(trainerQuery, query);
+    const categories = trainerItems.flatMap(trainer => trainer.category);
+
+    //query for the training collection using the categories from trainer
+    trainingQuery.push({$match: { categories: { $in: categories } } })
+    const trainingItems = await Training.aggregate(trainingQuery,query); 
     const items = [...trainingItems, ...trainerItems]
     return res.status(200).send({
         items,
