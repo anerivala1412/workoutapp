@@ -7,7 +7,8 @@ const bookmarkSchema = new mongoose.Schema({
             required: true
         },
         itemType: {
-            type: String, // Stores the type of the bookmarked item (e.g. "activity", "trainer", "e-store")
+            type: String,
+            enum: [ "Activity", "Trainer", "EStore","Training"], // Stores the type of the bookmarked item (e.g. "activity", "trainer", "e-store")
             required: true
           },
         itemId: {
@@ -20,8 +21,7 @@ const bookmarkSchema = new mongoose.Schema({
     });
 
 
-bookmarkSchema.pre("save", async function (next) {
-    console.log("Pre-save hook called");
+bookmarkSchema.pre("save", async function (next) { //to check if the itemId is present in the reference collection
     try {
       const model = mongoose.model(this.itemType);
       const item = await model.findById(this.itemId);
@@ -35,7 +35,15 @@ bookmarkSchema.pre("save", async function (next) {
     }
   });
 
-
+bookmarkSchema.pre("save", async function(next) { //to prevent duplicated items from save
+    console.log("Pre-save hook called");
+    const bookmark = this;
+    const existingBookmark = await Bookmark.findOne({ userId: bookmark.userId, itemId: bookmark.itemId, itemType: bookmark.itemType });
+    if (existingBookmark) {
+        throw new Error("Bookmark already exists for this item");
+    }
+    next();
+});
 
 
 const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
