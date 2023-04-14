@@ -9,6 +9,7 @@ db.user = require("./user.model");
 db.role = require("./role.model");
 db.category = require("./category.model");
 db.SubCategory = require("./sub-category.model");
+db.bookmark = require("./bookmark.model");
 
 db.slide = require("./slide.model");
 db.Session = require("./session.model");

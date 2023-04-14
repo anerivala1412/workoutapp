@@ -74,6 +74,7 @@ require("./app/routes/e-store.routes")(app);
 require("./app/routes/activity.routes")(app);
 require("./app/routes/experience.routes")(app);
 require("./app/routes/whatsapp.routes")(app);
+require("./app/routes/bookmark.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
