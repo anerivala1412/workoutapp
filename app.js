@@ -4,7 +4,13 @@ const session = require('express-session');
 const dbConfig = require("./app/config/db.config");
 require('dotenv').config();
 const passport = require('passport');
+const http = require('http');
+const socketIo = require('socket.io');
+const activityController = require("./app/controllers/activity.controller");
+const activityEmitter = activityController.getActivityEmitter();
 const app = express();
+
+
 
 var corsOptions = {
     origin: "http://localhost:8081"
@@ -58,7 +64,34 @@ db.mongoose
         console.error("Connection error", err);
         process.exit();
     });
+    
+//Socket API
+const server = http.createServer(app);
+const io = socketIo(server);
 
+io.on('connection', (socket) => {
+    console.log('New socket connection');
+    socket.on('log-in', data => {
+        console.log(data)
+        users[socket.id] = data
+        socket.broadcast.emit('user-connected', data)
+      })
+    socket.on('add-activity', activityController.addActivity)
+    activityEmitter.on('activity-added', (message,socketId) => {
+        console.log(message)
+        socket.to(socketId).emit('activity-added', message);
+      });
+  });
+
+app.get('/test.js', (req, res) => {
+    res.sendFile(__dirname + '/webSocket/test.js');
+});
+app.get('/socket', (req, res) => {
+    res.sendFile(__dirname + '/webSocket/index.html');
+});
+app.get('/socket.io/socket.io.js', (req, res) => {
+    res.sendFile(__dirname + '/node_modules/socket.io/client-dist/socket.io.js');
+});
 
 // routes
 require("./app/routes/auth.routes")(app);
@@ -78,9 +111,10 @@ require("./app/routes/bookmark.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
 });
+
 
 function roleCedar() {
     Role.estimatedDocumentCount((err, count) => {
