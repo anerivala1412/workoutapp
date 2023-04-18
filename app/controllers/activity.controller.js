@@ -18,6 +18,7 @@ exports.addActivity = async (message, socketId) => {
                
                 return activityEmitter.emit('activity-added', err);
             }
+            
             return activityEmitter.emit('activity-added', 'activity updated', socketId);
         })
      } else{

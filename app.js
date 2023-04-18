@@ -8,8 +8,9 @@ const http = require('http');
 const socketIo = require('socket.io');
 const activityController = require("./app/controllers/activity.controller");
 const activityEmitter = activityController.getActivityEmitter();
+const jwt = require("jsonwebtoken");
+const config = require("./app/config/auth.config");
 const app = express();
-
 
 
 var corsOptions = {
@@ -68,13 +69,41 @@ db.mongoose
 //Socket API
 const server = http.createServer(app);
 const io = socketIo(server);
-
+io.use((socket,next)=>{
+    try {
+        if(socket.handshake.auth.token){
+            const token = socket.handshake.auth.token
+            jwt.verify(token, config.secret, (err, decoded) => {
+                if (err) {
+                    return next(err);
+                }
+                console.log('User authenticated:', decoded.id);
+                socket.token = decoded.id;
+                next();
+            });
+        }else{
+            const err = new Error('No token provided');
+            next(err);
+        }
+    } catch (error) {
+        return next(error);
+    }
+   
+})
 io.on('connection', (socket) => {
-    console.log('New socket connection');
+    console.log('New socket connection to :'+ socket.token);
     socket.on('add-activity', activityController.addActivity)
     activityEmitter.on('activity-added', (message,socketId) => {
         console.log(message)
         socket.to(socketId).emit('activity-added', message);
+      });
+    socket.on('logout', () => {
+        // Disconnect the client
+        socket.disconnect(true);
+        socket.to(socket.token).emit('log-out', 'user loged out');
+        // Clear the auth data
+        delete socket.token;
+        console.log('user loged out')
       });
   });
 
