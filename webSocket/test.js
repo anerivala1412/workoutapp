@@ -22,9 +22,6 @@ messageForm.addEventListener('submit', e => {
     socket.emit('add-activity', message, socket.id);
     messageInput.value = ''
   })
-socket.on('log-in', (data)=>{
-    appendMessage(`user login with id: `)
-})
 socket.on('activity-added', data => {
 appendMessage(data)
 console.log(data)

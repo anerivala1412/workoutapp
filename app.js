@@ -71,11 +71,6 @@ const io = socketIo(server);
 
 io.on('connection', (socket) => {
     console.log('New socket connection');
-    socket.on('log-in', data => {
-        console.log(data)
-        users[socket.id] = data
-        socket.broadcast.emit('user-connected', data)
-      })
     socket.on('add-activity', activityController.addActivity)
     activityEmitter.on('activity-added', (message,socketId) => {
         console.log(message)
