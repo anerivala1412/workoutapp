@@ -22,12 +22,12 @@ module.exports = function(app) {
 
     app.get(
         "/api/sub-category/:id", [authJwt.verifyToken],
-        controller.updateSubCategory
+        controller.getSubCategory
     );
 
     app.delete(
         "/api/sub-category/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateSubCategory
+        controller.deleteSubCategory
     );
 
     app.get(

@@ -76,10 +76,10 @@ exports.getTrainingList = async(req, res) => {
 exports.getTrainingAndTrainerList = async(req, res) => {
     try {
         const items = await Training.find().populate('categories');
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
     } catch (error) {
         return res.status(500).send({
             message: error.message
@@ -88,33 +88,60 @@ exports.getTrainingAndTrainerList = async(req, res) => {
 
 }
 
+
 exports.searchWorkoutTrainer = async(req, res) => {
-    let query = []
-    let trainerQuery = []
-    let trainingQuery = []
-    let { page, size } = req.query
-    if (!page) page = 1;
-    if (!size) size = 10;
-    const limit = parseInt(size)
-    const skip = BaseService.getSkipValue(limit, page)
-    
-    query.push({ "$sort": { "order": -1 } })
-    query.push({ "$skip": skip })
-    query.push({ "$limit": limit })
+    try {
+        let query = []
+        let { page, size } = req.query
+        if (!page) page = 1;
+        if (!size) size = 10;
+        const limit = parseInt(size)
+        const skip = BaseService.getSkipValue(limit, page)
+        
+        query.push(
+        { "$sort": { "order": -1 } },
+        { "$skip": skip },
+        { "$limit": limit }
+        )
+      
 
-    //querry for the trainers collection
-    if (req.query && req.query.name) {
-        trainerQuery.push({$match: { name: { $regex: req.query.name, $options: "i" } } }, );
+        //querry for the trainers collection
+        if (req.query && req.query.name) {
+            query.push({
+                $lookup: {
+                  from: "categories",
+                  localField: "category",
+                  foreignField: "_id",
+                  as: "categoryInfo",
+                 
+                }
+              },
+              {
+                $match: {
+                  $or: [
+                    { name: { $regex:req.query.name, $options: "i" } },
+                    { "categoryInfo.title": { $regex: req.query.name, $options: "i" } }
+                  ]
+                }
+              },
+              {
+                $addFields: {
+                  category: "$categoryInfo.title"
+                }
+              },{ $project: { categoryInfo: 0 } }
+             );
+        }
+       
+        
+        const trainerItems = await Trainer.aggregate([query]);
+      
+        const items = [...trainerItems]
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
+    } catch (error) {
+        return res.status(500).send({message: error.message})
     }
-    const trainerItems = await Trainer.aggregate(trainerQuery, query);
-    const categories = trainerItems.flatMap(trainer => trainer.category);
-
-    //query for the training collection using the categories from trainer
-    trainingQuery.push({$match: { categories: { $in: categories } } })
-    const trainingItems = await Training.aggregate(trainingQuery,query); 
-    const items = [...trainingItems, ...trainerItems]
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
+    
 }

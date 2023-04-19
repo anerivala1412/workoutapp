@@ -22,7 +22,7 @@ module.exports = function(app) {
 
     app.get(
         "/api/category/:id", [authJwt.verifyToken],
-        controller.updateCategory
+        controller.getCategory
     );
 
     app.delete(

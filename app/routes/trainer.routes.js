@@ -22,12 +22,12 @@ module.exports = function(app) {
 
     app.get(
         "/api/trainer/:id", [authJwt.verifyToken],
-        controller.updateTrainer
+        controller.getTrainer
     );
 
     app.delete(
         "/api/trainer/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateTrainer
+        controller.deleteTrainer
     );
 
     app.get(

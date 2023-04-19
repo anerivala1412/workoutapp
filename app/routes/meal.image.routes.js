@@ -9,7 +9,7 @@ module.exports = function(app) {
         next();
     });
 
-    app.get(
+    app.post(
         "/api/image-result", [],
         controller.getImageResult
     );

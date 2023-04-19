@@ -22,12 +22,12 @@ module.exports = function(app) {
 
     app.get(
         "/api/slide/:id", [authJwt.verifyToken],
-        controller.updateSlide
+        controller.getSlide
     );
 
     app.delete(
         "/api/slide/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateSlide
+        controller.deleteSlide
     );
 
     app.get(

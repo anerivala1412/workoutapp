@@ -22,7 +22,7 @@ module.exports = function(app) {
 
     app.get(
         "/api/experience/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateExperience
+        controller.getExperience
     );
 
     app.delete(

@@ -22,7 +22,7 @@ module.exports = function(app) {
 
     app.get(
         "/api/activity/:id", [authJwt.verifyToken],
-        controller.updateActivity
+        controller.getActivity
     );
 
     app.delete(
