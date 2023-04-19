@@ -3,6 +3,11 @@ const mongoose = require("mongoose");
 const Activity = mongoose.model(
     "Activity",
     new mongoose.Schema({
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
         order: {
             type: Number,
             default: 0
