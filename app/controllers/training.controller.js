@@ -74,11 +74,17 @@ exports.getTrainingList = async(req, res) => {
 }
 
 exports.getTrainingAndTrainerList = async(req, res) => {
-    const items = await Training.find().populate('categories');
+    try {
+        const items = await Training.find().populate('categories');
     return res.status(200).send({
         items,
         total: items.length
     });
+    } catch (error) {
+        return res.status(500).send({
+            message: error.message
+        })   
+    }
 
 }
 

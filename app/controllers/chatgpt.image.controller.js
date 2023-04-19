@@ -39,9 +39,12 @@ function nutritionSearch(nutritionInfoPromises) {
             console.log(`Total fat: ${totalFat}`);
             console.log(`Total protein: ${totalProtein}`);
             console.log(`Total carbs: ${totalCarbs}`);
+            return `Total calories: ${totalCalories},Total fat: ${totalFat},Total protein: ${totalProtein}, Total carbs: ${totalCarbs}`
         })
         .catch(error => {
-            console.error(error);
+            return res.status(500).send({
+                message: error.message
+            }) 
         });
 }
 
@@ -57,7 +60,10 @@ exports.getImageResult = (req, res) => {
                 const url = `${process.env.NEUTRITION_BASE_URL}?query=${encodedFoodName}&pageSize=1&api_key=${apiKey}`;
                 return axios.get(url);
             });
-            nutritionSearch(nutritionInfoPromises);
+            const items = nutritionSearch(nutritionInfoPromises);
+            return res.status(200).send({
+                items
+            });
         })
         .catch(err => {
             console.log(err);

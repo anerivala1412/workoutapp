@@ -65,19 +65,25 @@ exports.getExperience = (req, res) => {
 }
 
 exports.getExperienceList = async(req, res) => {
-    let query = []
-    let { page, size } = req.query
-    if (!page) page = 1;
-    if (!size) size = 10;
-    const limit = parseInt(size)
-    const skip = BaseService.getSkipValue(limit, page)
+   try {
+        let query = []
+        let { page, size } = req.query
+        if (!page) page = 1;
+        if (!size) size = 10;
+        const limit = parseInt(size)
+        const skip = BaseService.getSkipValue(limit, page)
 
-    query.push({ "$sort": { "order": -1 } })
-    query.push({ "$skip": skip })
-    query.push({ "$limit": limit })
-    const items = await Experience.aggregate(query);
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
+        query.push({ "$sort": { "order": -1 } })
+        query.push({ "$skip": skip })
+        query.push({ "$limit": limit })
+        const items = await Experience.aggregate(query);
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
+   } catch (error) {
+    return res.status(500).send({
+        message: error.message
+    })
+   }
 }

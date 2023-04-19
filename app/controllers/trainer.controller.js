@@ -64,11 +64,17 @@ exports.getTrainer = (req, res) => {
 }
 
 exports.getTrainerList = async(req, res) => {
+   try {
     const items = await Trainer.find();
     return res.status(200).send({
         items,
         total: items.length
     });
+   } catch (error) {
+    return res.status(500).send({
+        message: error.message
+    }) 
+   }
 }
 
 exports.getTrainerByCategory = async(req, res) => {

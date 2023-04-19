@@ -64,9 +64,15 @@ exports.getEStore = (req, res) => {
 }
 
 exports.getEStoreList = async(req, res) => {
-    const items = await EStore.find();
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
+    try {
+        const items = await EStore.find();
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
+    } catch (error) {
+        return res.status(500).send({
+            message: error.message
+        }) 
+    }
 }
