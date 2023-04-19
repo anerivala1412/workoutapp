@@ -34,5 +34,4 @@ module.exports = function(app) {
         "/api/activity/", [authJwt.verifyToken],
         controller.getActivityList
     );
-
 };
