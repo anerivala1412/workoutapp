@@ -67,34 +67,40 @@ exports.getMeal = (req, res) => {
 }
 
 exports.getMealList = async(req, res) => {
-    let query = []
-    query.push({ $match: { user: new ObjectId(req.userId) } });
-    query.push({
-        $group: {
-            _id: {
-                mealType: "$mealType",
-                name: "$name",
-                user: new ObjectId(req.userId)
-            },
-            total: { $sum: 1 }
-        }
-    });
-    query.push({
-        $group: {
-            _id: "$_id.mealType",
-            meals: {
-                $push: {
-                    name: "$_id.name",
-                    total: "$total"
+    try {
+        let query = []
+        query.push({ $match: { user: new ObjectId(req.userId) } });
+        query.push({
+            $group: {
+                _id: {
+                    mealType: "$mealType",
+                    name: "$name",
+                    user: new ObjectId(req.userId)
+                },
+                total: { $sum: 1 }
+            }
+        });
+        query.push({
+            $group: {
+                _id: "$_id.mealType",
+                meals: {
+                    $push: {
+                        name: "$_id.name",
+                        total: "$total"
+                    }
                 }
             }
-        }
-    });
-    query.push({ "$sort": { "createdAt": -1 } });
+        });
+        query.push({ "$sort": { "createdAt": -1 } });
 
-    const items = await Meal.aggregate(query);
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
+        const items = await Meal.aggregate(query);
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
+    } catch (error) {
+        return res.status(500).send({
+            message: error.message
+        })
+    }
 }

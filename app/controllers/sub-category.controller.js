@@ -64,9 +64,15 @@ exports.getSubCategory = (req, res) => {
 }
 
 exports.getSubCategoryList = async(req, res) => {
+   try {
     const items = await SubCategory.find();
     return res.status(200).send({
         items,
         total: items.length
     });
+   } catch (error) {
+    return res.status(500).send({
+        message: error.message
+    }) 
+   }
 }

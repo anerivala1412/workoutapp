@@ -17,12 +17,12 @@ module.exports = function(app) {
 
     app.get(
         "/api/meal/:id", [authJwt.verifyToken, authJwt.isAdmin, authJwt.isUser],
-        controller.updateMeal
+        controller.getMeal
     );
 
     app.delete(
         "/api/meal/:id", [authJwt.verifyToken, authJwt.isAdmin, authJwt.isUser],
-        controller.updateMeal
+        controller.deleteMeal 
     );
 
     app.get(

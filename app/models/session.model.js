@@ -9,6 +9,11 @@ const Session = mongoose.model(
             enum: ['Full', 'Upper', "Lower", "ALL"],
             default: 'ALL'
         },
+        stage: {
+            type: String,
+            enum: ['Beginner', 'Intermediate ', "Advance"],
+            default: 'Beginner'
+        },
         seat: Number,
         startDateTime: Date,
         description: String,

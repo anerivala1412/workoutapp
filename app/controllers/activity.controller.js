@@ -88,10 +88,15 @@ exports.getActivity = (req, res) => {
 }
 
 exports.getActivityList = async(req, res) => {
+   try {
     const items = await Activity.find();
     return res.status(200).send({
         items,
         total: items.length
     });
+   } catch (error) {
+    return res.status(500).send({
+        message: error.message
+    })  
+   }
 }
-

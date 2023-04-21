@@ -22,7 +22,7 @@ module.exports = function(app) {
 
     app.get(
         "/api/bookmark/:id", [authJwt.verifyToken, authJwt.isUser],
-        controller.updateBookmark
+        controller.getBookmark
     );
 
     app.delete(

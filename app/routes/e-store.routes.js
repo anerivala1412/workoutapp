@@ -22,7 +22,7 @@ module.exports = function(app) {
 
     app.get(
         "/api/e-store/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateEStore
+        controller.getEStore
     );
 
     app.delete(

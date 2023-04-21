@@ -52,34 +52,56 @@ exports.getSession = (req, res) => {
     const id = req.params.id;
     Session.findById({
             _id: new ObjectId(id)
-        })
-        .exec((err, catgory) => {
+        }).populate({
+            path: 'author',
+            select: 'username',
+            })
+        .exec((err, session) => {
             if (err) {
                 res.status(500).send({ message: err });
                 return;
             }
             return res.status(200).send({
-                ...catgory
+                ...session._doc
             });
         })
 }
 
 exports.getSessionList = async(req, res) => {
-    let query = []
-    let { page, size } = req.query
-    if (!page) page = 1;
-    if (!size) size = 10;
-    const limit = parseInt(size)
-    const skip = BaseService.getSkipValue(limit, page)
-    if (req.query && req.query.bodyType) {
-        query.push({ $match: { bodyType: req.query.bodyType } });
+    try {
+        let query = []
+        let { page, size } = req.query
+        if (!page) page = 1;
+        if (!size) size = 10;
+        const limit = parseInt(size)
+        const skip = BaseService.getSkipValue(limit, page)
+        if (req.query && req.query.bodyType) {
+            query.push({ $match: { bodyType: req.query.bodyType } });
+        }
+        query.push({ "$sort": { "order": -1 } })
+        query.push({ "$skip": skip })
+        query.push({ "$limit": limit })
+        query.push({ "$limit": limit })
+        query.push({
+            $lookup: {
+              from: 'users', 
+              localField: 'author',
+              foreignField: '_id',
+              as: 'authorr',
+            }}, {
+                $addFields: {
+                    author: "$authorr.username"
+                }},
+              { $project: { authorr: 0 } },)
+
+        const items = await Session.aggregate(query);
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
+    } catch (error) {
+        return res.status(500).send({
+            message: error.message
+        })
     }
-    query.push({ "$sort": { "order": -1 } })
-    query.push({ "$skip": skip })
-    query.push({ "$limit": limit })
-    const items = await Session.aggregate(query);
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
 }

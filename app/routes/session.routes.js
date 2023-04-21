@@ -22,12 +22,12 @@ module.exports = function(app) {
 
     app.get(
         "/api/session/:id", [authJwt.verifyToken],
-        controller.updateSession
+        controller.getSession
     );
 
     app.delete(
         "/api/session/:id", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.updateSession
+        controller.deleteSession
     );
 
     app.get(
