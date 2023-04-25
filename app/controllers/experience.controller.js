@@ -1,7 +1,8 @@
 const { ObjectId } = require("mongodb");
 const BaseService = require("../core/base.service");
 const db = require("../models");
-const Experience = db.Experience
+const Experience = db.Experience;
+
 exports.addExperience = (req, res) => {
     const requestObj = req.body;
     const categoryInfo = new Experience(requestObj);
@@ -65,7 +66,7 @@ exports.getExperience = (req, res) => {
 }
 
 exports.getExperienceList = async(req, res) => {
-   try {
+    try {
         let query = []
         let { page, size } = req.query
         if (!page) page = 1;
@@ -81,9 +82,9 @@ exports.getExperienceList = async(req, res) => {
             items,
             total: items.length
         });
-   } catch (error) {
-    return res.status(500).send({
-        message: error.message
-    })
-   }
+    } catch (error) {
+        return res.status(500).send({
+            message: error.message
+        })
+    }
 }

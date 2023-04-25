@@ -3,7 +3,6 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 require('dotenv').config();
 
-
 passport.serializeUser((user, done) => {
     done(null, user);
 })

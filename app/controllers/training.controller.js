@@ -3,6 +3,7 @@ const db = require("../models");
 const Trainer = require("../models/trainer.model");
 const BaseService = require("../core/base.service");
 const Training = db.Training;
+
 exports.addTraining = (req, res) => {
     const requestObj = req.body;
     const trainingInfo = new Training(requestObj);
@@ -83,7 +84,7 @@ exports.getTrainingAndTrainerList = async(req, res) => {
     } catch (error) {
         return res.status(500).send({
             message: error.message
-        })   
+        })
     }
 
 }
@@ -97,51 +98,44 @@ exports.searchWorkoutTrainer = async(req, res) => {
         if (!size) size = 10;
         const limit = parseInt(size)
         const skip = BaseService.getSkipValue(limit, page)
-        
-        query.push(
-        { "$sort": { "order": -1 } },
-        { "$skip": skip },
-        { "$limit": limit }
-        )
-      
+
+        query.push({ "$sort": { "order": -1 } }, { "$skip": skip }, { "$limit": limit })
+
 
         //querry for the trainers collection
         if (req.query && req.query.name) {
             query.push({
                 $lookup: {
-                  from: "categories",
-                  localField: "category",
-                  foreignField: "_id",
-                  as: "categoryInfo",
-                 
+                    from: "categories",
+                    localField: "category",
+                    foreignField: "_id",
+                    as: "categoryInfo",
+
                 }
-              },
-              {
+            }, {
                 $match: {
-                  $or: [
-                    { name: { $regex:req.query.name, $options: "i" } },
-                    { "categoryInfo.title": { $regex: req.query.name, $options: "i" } }
-                  ]
+                    $or: [
+                        { name: { $regex: req.query.name, $options: "i" } },
+                        { "categoryInfo.title": { $regex: req.query.name, $options: "i" } }
+                    ]
                 }
-              },
-              {
+            }, {
                 $addFields: {
-                  category: "$categoryInfo.title"
+                    category: "$categoryInfo.title"
                 }
-              },{ $project: { categoryInfo: 0 } }
-             );
+            }, { $project: { categoryInfo: 0 } });
         }
-       
-        
+
+
         const trainerItems = await Trainer.aggregate([query]);
-      
+
         const items = [...trainerItems]
         return res.status(200).send({
             items,
             total: items.length
         });
     } catch (error) {
-        return res.status(500).send({message: error.message})
+        return res.status(500).send({ message: error.message })
     }
-    
+
 }

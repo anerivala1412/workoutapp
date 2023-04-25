@@ -1,6 +1,6 @@
 require('dotenv').config();
-const {getTextMessageInput} = require('../middlewares/whatapp.service');
-const {sendMessage} = require('../middlewares/whatapp.service');
+const { getTextMessageInput } = require('../middlewares/whatapp.service');
+const { sendMessage } = require('../middlewares/whatapp.service');
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -17,7 +17,7 @@ module.exports = function(app) {
             .then(function(response) {
                 // res.redirect('/');
                 res.status(200).send(response.data);
-                return ;
+                return;
             })
             .catch(function(error) {
                 console.log(error);

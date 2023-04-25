@@ -1,7 +1,6 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
 
-const BaseService = require("../core/base.service");
 const Meal = db.Meal;
 exports.addMeal = (req, res) => {
     const requestObj = req.body;

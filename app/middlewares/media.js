@@ -37,7 +37,6 @@ const imageUpload = multer({
     }),
 });
 
-
 const videoUpload = multer({
     fileFilter,
     storage: multerS3({
