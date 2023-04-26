@@ -8,7 +8,7 @@ module.exports = function (app) {
     next();
   });
 
-  app.get(
+  app.post(
     '/api/image-result',
     function (req, res, next) {
       if (req.headers['content-type']?.startsWith('multipart/form-data')) {

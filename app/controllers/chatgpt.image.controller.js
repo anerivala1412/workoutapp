@@ -1,7 +1,11 @@
 const Clarifai = require('clarifai');
 require('dotenv').config();
 const axios = require('axios');
+const querystring = require('querystring');
 
+const clientId = process.env.FATSECREAT_CLIENT_ID;
+const clientSecret = process.env.FATSECREAT_CLIENT_SECRET;
+const baseUrl = process.env.FATSECREAT_BASE_URL;
 //api id for image processing
 const app = new Clarifai.App({
   apiKey: process.env.CLARIFAY_API_KEY,
@@ -91,18 +95,42 @@ exports.getImageResult = async (req, res) => {
     if (!req.query.foodName) {
       return res.status(500).send({ errors: 'No Image or Food Name provided' });
     }
-    const encodedFoodName = encodeURIComponent(req.query.foodName);
-    const url = `${process.env.NEUTRITION_BASE_URL}?query=${encodedFoodName}&pageSize=5&api_key=${apiKey}`;
-    const neutritionInfoPromise = await axios.get(url);
-    const allfoods = neutritionInfoPromise.data.foods;
-    const nutritionInfo = allfoods.map((food) => ({
-      name: food.description,
-      ingredients: food.ingredients,
-      calories: food.foodNutrients.find((nutrient) => nutrient.nutrientName === 'Energy').value,
-      fat: food.foodNutrients.find((nutrient) => nutrient.nutrientName === 'Total lipid (fat)').value,
-      protein: food.foodNutrients.find((nutrient) => nutrient.nutrientName === 'Protein').value,
-      carbs: food.foodNutrients.find((nutrient) => nutrient.nutrientName === 'Carbohydrate, by difference').value,
-    }));
-    return res.send({ queryItems: nutritionInfo });
+    const nutritionInfo = await getNutritionInfo(req.query.foodName)
+    return res.send({ items: nutritionInfo });
   }
 };
+
+
+async function getNutritionInfo(foodName) {
+  try {
+    // Get an access token using OAuth 2.0 client credentials flow
+    const authUrl = 'https://oauth.fatsecret.com/connect/token';
+    const searchUrl =`https://platform.fatsecret.com/rest/server.api?method=foods.search&format=json&search_expression=${foodName}`
+    const authData = {
+      grant_type: 'client_credentials',
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope: 'basic'
+    };
+    const authResponse = await axios.post(authUrl, querystring.stringify(authData));
+    const accessToken = authResponse.data.access_token;
+    const requestData = {
+      search_expression: foodName,
+      format: 'json',
+    };
+
+    const response = await axios.post(searchUrl,requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+    const {food } = response.data?.foods
+    console.log(food)
+
+    return {...food}
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error getting nutrition info from FatSecret API');
+  }
+}
