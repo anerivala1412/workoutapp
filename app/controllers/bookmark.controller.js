@@ -3,18 +3,16 @@ const BaseService = require("../core/base.service");
 const db = require("../models");
 const Bookmark = db.bookmark
 exports.addBookmark = (req, res) => {
-        const requestObj = req.body;
-        const bookmarkInfo = new Bookmark(requestObj);
-    
-        bookmarkInfo.save((err, Bookmark) => {
-            if (err) {
-                res.status(500).send({ message: err.message });
-                return
-            }
-            return res.send({ message: "Bookmark created successfully!" });;
-        });
-    
-   
+    const requestObj = req.body;
+    const bookmarkInfo = new Bookmark(requestObj);
+
+    bookmarkInfo.save((err, Bookmark) => {
+        if (err) {
+            res.status(500).send({ message: err.message });
+            return
+        }
+        return res.send({ message: "Bookmark created successfully!" });;
+    });
 };
 
 exports.updateBookmark = (req, res) => {
@@ -82,9 +80,9 @@ exports.getBookmarkList = async(req, res) => {
         return res.status(200).send({
             items,
             total: items.length
-        }); 
+        });
     } catch (error) {
-        return res.status(500).send({message :error.message})
+        return res.status(500).send({ message: error.message })
     }
-   
+
 }

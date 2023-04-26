@@ -15,7 +15,6 @@ const User = mongoose.model(
             type: Number,
             default: 0
         }
-
     }, {
         timestamps: true
     })

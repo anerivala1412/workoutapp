@@ -1,3 +1,4 @@
+require('dotenv').config();
 module.exports = {
-    secret: "fterobic-secret-key",
+    secret: process.env.FITROBIC_SECRET,
 };

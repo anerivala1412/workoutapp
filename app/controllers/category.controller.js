@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
-const Category = db.category
+const Category = db.category;
+
 exports.addCategory = (req, res) => {
     const requestObj = req.body;
     const categoryInfo = new Category(requestObj);
@@ -69,11 +70,11 @@ exports.getCategoryList = async(req, res) => {
         return res.status(200).send({
             items,
             total: items.length
-        });  
+        });
     } catch (error) {
         return res.status(500).send({
             message: error.message
-        }) 
+        })
     }
-    
+
 }

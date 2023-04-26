@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
-const Slide = db.slide
+const Slide = db.slide;
+
 exports.addSlide = (req, res) => {
     const requestObj = req.body;
     const categoryInfo = new Slide(requestObj);
@@ -64,15 +65,15 @@ exports.getSlide = (req, res) => {
 }
 
 exports.getSlideList = async(req, res) => {
-   try {
-    const items = await Slide.find();
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
-   } catch (error) {
-    return res.status(500).send({
-        message: error.message
-    }) 
-   }
+    try {
+        const items = await Slide.find();
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
+    } catch (error) {
+        return res.status(500).send({
+            message: error.message
+        })
+    }
 }

@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
-const Trainer = db.Trainer
+const Trainer = db.Trainer;
+
 exports.addTrainer = (req, res) => {
     const requestObj = req.body;
     const trainerInfo = new Trainer(requestObj);
@@ -64,47 +65,15 @@ exports.getTrainer = (req, res) => {
 }
 
 exports.getTrainerList = async(req, res) => {
-   try {
-    const items = await Trainer.find();
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
-   } catch (error) {
-    return res.status(500).send({
-        message: error.message
-    }) 
-   }
-}
-
-exports.getTrainerByCategory = async(req, res) => {
-    let query = []
-        // query.push({ $match: { user: new ObjectId(req.userId) } });
-        // query.push({
-        //     $group: {
-        //         _id: {
-        //             mealType: "$mealType",
-        //             name: "$name",
-        //             user: new ObjectId(req.userId)
-        //         },
-        //         total: { $sum: 1 }
-        //     }
-        // });
-        // query.push({
-        //     $group: {
-        //         _id: "$_id.mealType",
-        //         meals: {
-        //             $push: {
-        //                 name: "$_id.name",
-        //                 total: "$total"
-        //             }
-        //         }
-        //     }
-        // });
-    query.push({ "$sort": { "createdAt": -1 } });
-
-    return res.status(200).send({
-        items,
-        total: items.length
-    });
+    try {
+        const items = await Trainer.find();
+        return res.status(200).send({
+            items,
+            total: items.length
+        });
+    } catch (error) {
+        return res.status(500).send({
+            message: error.message
+        })
+    }
 }

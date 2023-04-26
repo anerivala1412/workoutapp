@@ -34,9 +34,4 @@ module.exports = function(app) {
         "/api/trainer/", [authJwt.verifyToken],
         controller.getTrainerList
     );
-    app.get(
-        "/api/trainer-by-catgory/", [authJwt.verifyToken],
-        controller.getTrainerByCategory
-    );
-
 };

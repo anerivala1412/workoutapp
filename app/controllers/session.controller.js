@@ -55,7 +55,7 @@ exports.getSession = (req, res) => {
         }).populate({
             path: 'author',
             select: 'username',
-            })
+        })
         .exec((err, session) => {
             if (err) {
                 res.status(500).send({ message: err });
@@ -84,15 +84,16 @@ exports.getSessionList = async(req, res) => {
         query.push({ "$limit": limit })
         query.push({
             $lookup: {
-              from: 'users', 
-              localField: 'author',
-              foreignField: '_id',
-              as: 'authorr',
-            }}, {
-                $addFields: {
-                    author: "$authorr.username"
-                }},
-              { $project: { authorr: 0 } },)
+                from: 'users',
+                localField: 'author',
+                foreignField: '_id',
+                as: 'authorInfo',
+            }
+        }, {
+            $addFields: {
+                author: "$authorInfo.username"
+            }
+        }, { $project: { authorInfo: 0 } }, )
 
         const items = await Session.aggregate(query);
         return res.status(200).send({
