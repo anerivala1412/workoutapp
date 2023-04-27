@@ -2,6 +2,7 @@ require('dotenv').config();
 const controller = require('../controllers/chatgpt.image.controller');
 const mediaUpload = require('../middlewares/media');
 const singleImageUpload = mediaUpload.imageUpload.single('image');
+const { authJwt } = require("../middlewares");
 module.exports = function (app) {
   app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
@@ -9,7 +10,7 @@ module.exports = function (app) {
   });
 
   app.post(
-    '/api/image-result',
+    '/api/image-result',[authJwt.verifyToken],
     function (req, res, next) {
       if (req.headers['content-type']?.startsWith('multipart/form-data')) {
         singleImageUpload(req, res, function (err, some) {
@@ -23,6 +24,6 @@ module.exports = function (app) {
         next();
       }
     },
-    controller.getImageResult
+    controller.getSearchResult
   );
 };

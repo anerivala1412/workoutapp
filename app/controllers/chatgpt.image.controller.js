@@ -45,7 +45,7 @@ function findNutrientValue(foods, nutrientName) {
   return nutrient?.value;
 }
 
-exports.getImageResult = async (req, res) => {
+exports.getSearchResult = async (req, res) => {
   if (req.body.imageUrl) {
     app.models
       .predict(Clarifai.FOOD_MODEL, req.body.imageUrl)
@@ -53,7 +53,6 @@ exports.getImageResult = async (req, res) => {
         const foodNames = response.outputs[0].data.concepts
           .filter((concept) => concept?.name !== undefined && concept.value >= threshold)
           .map((concept) => concept.name);
-        console.log(foodNames);
         const nutritionInfoPromises = foodNames.map((foodName) => {
           return nutritionImageSearch(foodName);
         });
@@ -70,14 +69,12 @@ exports.getImageResult = async (req, res) => {
               },
               { totalCalories: 0, totalFat: 0, totalProtein: 0, totalCarbs: 0 }
             );
+            totalNutrition.totalCalories = totalNutrition.totalCalories.toFixed(2);
+            totalNutrition.totalFat = totalNutrition.totalFat.toFixed(2);
+            totalNutrition.totalProtein = totalNutrition.totalProtein.toFixed(2);
+            totalNutrition.totalCarbs = totalNutrition.totalCarbs.toFixed(2);
 
-            // eslint-disable-next-line no-console
-            console.log(`Total calories: ${totalNutrition.totalCalories}`);
-            console.log(`Total fat: ${totalNutrition.totalFat}`);
-            console.log(`Total protein: ${totalNutrition.totalProtein}`);
-            console.log(`Total carbs: ${totalNutrition.totalCarbs}`);
-
-            return { items: totalNutrition, ingredients: foodNames };
+            return { items:{totalNutrition, ingredients: foodNames} };
           })
           .catch((error) => {
             throw new Error(error.message);
@@ -96,7 +93,7 @@ exports.getImageResult = async (req, res) => {
       return res.status(500).send({ errors: 'No Image or Food Name provided' });
     }
     const nutritionInfo = await getNutritionInfo(req.query.foodName)
-    return res.send({ items: nutritionInfo });
+    return res.send({ ...nutritionInfo });
   }
 };
 
@@ -104,8 +101,8 @@ exports.getImageResult = async (req, res) => {
 async function getNutritionInfo(foodName) {
   try {
     // Get an access token using OAuth 2.0 client credentials flow
-    const authUrl = 'https://oauth.fatsecret.com/connect/token';
-    const searchUrl =`https://platform.fatsecret.com/rest/server.api?method=foods.search&format=json&search_expression=${foodName}`
+    const authUrl = process.env.FATSECREAT_AUTH_URL;
+    const searchUrl =`${process.env.FATSECREAT_BASE_URL}?method=foods.search&format=json&search_expression=${foodName}`
     const authData = {
       grant_type: 'client_credentials',
       client_id: clientId,
@@ -126,9 +123,11 @@ async function getNutritionInfo(foodName) {
       },
     });
     const {food } = response.data?.foods
-    console.log(food)
-
-    return {...food}
+    let items =[] 
+   food.map(item=>{
+    items.push({food_name: item.food_name, food_description: item.food_description}) 
+   })
+    return {items}
   } catch (error) {
     console.error(error);
     throw new Error('Error getting nutrition info from FatSecret API');
