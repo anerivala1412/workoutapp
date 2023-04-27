@@ -5,7 +5,6 @@ const querystring = require('querystring');
 
 const clientId = process.env.FATSECREAT_CLIENT_ID;
 const clientSecret = process.env.FATSECREAT_CLIENT_SECRET;
-const baseUrl = process.env.FATSECREAT_BASE_URL;
 //api id for image processing
 const app = new Clarifai.App({
   apiKey: process.env.CLARIFAY_API_KEY,
@@ -46,54 +45,69 @@ function findNutrientValue(foods, nutrientName) {
 }
 
 exports.getSearchResult = async (req, res) => {
-  if (req.body.imageUrl) {
+if (req.body.imageUrl) {
+  try {
     app.models
-      .predict(Clarifai.FOOD_MODEL, req.body.imageUrl)
-      .then((response) => {
-        const foodNames = response.outputs[0].data.concepts
-          .filter((concept) => concept?.name !== undefined && concept.value >= threshold)
-          .map((concept) => concept.name);
-        const nutritionInfoPromises = foodNames.map((foodName) => {
-          return nutritionImageSearch(foodName);
-        });
-        return Promise.all(nutritionInfoPromises)
-          .then((nutritionInfoList) => {
-            const totalNutrition = nutritionInfoList.reduce(
-              (acc, curr) => {
-                const servingSize = curr.servingSize || 10;
-                acc.totalCalories += (curr.calories || 0) * (servingSize / 100);
-                acc.totalFat += (curr.fat || 0) * (servingSize / 100);
-                acc.totalProtein += (curr.protein || 0) * (servingSize / 100);
-                acc.totalCarbs += (curr.carbs || 0) * (servingSize / 100);
-                return acc;
-              },
-              { totalCalories: 0, totalFat: 0, totalProtein: 0, totalCarbs: 0 }
-            );
-            totalNutrition.totalCalories = totalNutrition.totalCalories.toFixed(2);
-            totalNutrition.totalFat = totalNutrition.totalFat.toFixed(2);
-            totalNutrition.totalProtein = totalNutrition.totalProtein.toFixed(2);
-            totalNutrition.totalCarbs = totalNutrition.totalCarbs.toFixed(2);
-
-            return { items:{totalNutrition, ingredients: foodNames} };
-          })
-          .catch((error) => {
-            throw new Error(error.message);
-          });
-      })
-      .then((data) => {
-        return res.status(200).send(data);
-      })
-      .catch((err) => {
-        return res.status(500).send({
-          message: err.message,
-        });
+    .predict(Clarifai.FOOD_MODEL, req.body.imageUrl)
+    .then((response) => {
+      const foodNames = response.outputs[0].data.concepts
+        .filter((concept) => concept?.name !== undefined && concept.value >= threshold)
+        .map((concept) => concept.name);
+      const nutritionInfoPromises = foodNames.map((foodName) => {
+        return nutritionImageSearch(foodName);
       });
-  } else {
-    if (!req.query.foodName) {
-      return res.status(500).send({ errors: 'No Image or Food Name provided' });
+      return Promise.all(nutritionInfoPromises)
+        .then((nutritionInfoList) => {
+          const totalNutrition = nutritionInfoList.reduce(
+            (acc, curr) => {
+              const servingSize = curr.servingSize || 10;
+              acc.calories += (curr.calories || 0) * (servingSize / 100);
+              acc.fat += (curr.fat || 0) * (servingSize / 100);
+              acc.protein += (curr.protein || 0) * (servingSize / 100);
+              acc.carbs += (curr.carbs || 0) * (servingSize / 100);
+              return acc;
+            },
+            { calories: 0, fat: 0, protein: 0, carbs: 0 }
+          );
+          totalNutrition.calories = totalNutrition.calories.toFixed(2);
+          totalNutrition.fat = totalNutrition.fat.toFixed(2);
+          totalNutrition.protein = totalNutrition.protein.toFixed(2);
+          totalNutrition.carbs = totalNutrition.carbs.toFixed(2);
+
+          return { items:{totalNutrition, ingredients: foodNames} };
+        })
+        .catch((error) => {
+          throw new Error(error.message);
+        });
+    })
+    .then((data) => {
+      return res.status(200).send(data);
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: err.message,
+      });
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: error.message,
+    });
+  }
+
+} else {
+    try {
+      if (!req.query.foodName) {
+        return res.status(500).send({ errors: 'No Image or Food Name provided' });
+      }
+      const nutritionInfo = await getNutritionInfo(req.query.foodName)
+      return res.status(200).send({ ...nutritionInfo });
+    } catch (error) {
+      return res.status(500).send({
+        message: error.message,
+      });
+      
     }
-    const nutritionInfo = await getNutritionInfo(req.query.foodName)
-    return res.send({ ...nutritionInfo });
+   
   }
 };
 
