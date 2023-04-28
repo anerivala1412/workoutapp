@@ -3,20 +3,45 @@ const mongoose = require("mongoose");
 const Trainer = mongoose.model(
     "Trainer",
     new mongoose.Schema({
-        image: String,
-        name: String,
-        speciality: String,
+        image:  {
+            type: String,
+            required: true
+        },
+        name:  {
+            type: String,
+            required: true
+        },
+        speciality:  {
+            type: String,
+            required: true
+        },
         order: Number,
         rate: Number,
         rating: Number,
-        experience: Number,
-        completedWorkout: Number,
-        activeClient: Number,
-        bio: String,
-        phonenNumber: String,
+        experience:  {
+            type: Number,
+            required: true
+        },
+        completedWorkout:  {
+            type: Number,
+            required: true
+        },
+        activeClient:  {
+            type: Number,
+            required: true
+        },
+        bio:  {
+            type: String,
+            required: true
+        },
+        phonenNumber:  {
+            type: String,
+            required: true
+        },
         category: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Category"
+            ref: "Category",
+            required: true
         }],
 
     }, {

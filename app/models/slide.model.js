@@ -3,9 +3,15 @@ const mongoose = require("mongoose");
 const Slide = mongoose.model(
     "Slide",
     new mongoose.Schema({
-        title: String,
+        title:  {
+            type: String,
+            required: true
+        },
         order: Number,
-        image: String,
+        image:  {
+            type: String,
+            required: true
+        },
     }, {
         timestamps: true
     })

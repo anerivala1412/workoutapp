@@ -3,29 +3,56 @@ const mongoose = require("mongoose");
 const Session = mongoose.model(
     "Session",
     new mongoose.Schema({
-        title: String,
+        title:  {
+            type: String,
+            required: true
+        },
         bodyType: {
             type: String,
             enum: ['Full', 'Upper', "Lower", "ALL"],
-            default: 'ALL'
+            default: 'ALL',
+            required: true
         },
         stage: {
             type: String,
             enum: ['Beginner', 'Intermediate ', "Advance"],
-            default: 'Beginner'
+            default: 'Beginner',
+            required: true
         },
-        seat: Number,
-        startDateTime: Date,
-        description: String,
-        cost: Number,
+        seat:  {
+            type: Number,
+            required: true
+        },
+        startDateTime:  {
+            type: Date,
+            required: true
+        },
+        description:  {
+            type: String,
+            required: true
+        },
+        cost:  {
+            type: Number,
+            required: true
+        },
         author: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true
         },
-        tumbnail: String,
+        tumbnail:  {
+            type: String,
+            required: true
+        },
         order: Number,
-        videoUrl: String,
-        image: String,
+        videoUrl:  {
+            type: String,
+            required: true
+        },
+        image:  {
+            type: String,
+            required: true
+        },
     }, {
         timestamps: true
     })
