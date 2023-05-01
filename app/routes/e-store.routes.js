@@ -1,6 +1,6 @@
 require('dotenv').config();
 const controller = require("../controllers/e-store.controller");
-const { authJwt } = require("../middlewares");
+const { authJwt, checkRequiredFields } = require("../middlewares");
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -11,7 +11,7 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/e-store", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/e-store", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['title','description','image'])],
         controller.addEStore
     );
 

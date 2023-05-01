@@ -1,6 +1,6 @@
 require('dotenv').config();
 const controller = require("../controllers/trainer.controller");
-const { authJwt } = require("../middlewares");
+const { authJwt, checkRequiredFields } = require("../middlewares");
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -11,7 +11,7 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/trainer", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/trainer", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['image','name','speciality','experience','completedWorkout','activeClient','bio','phonenNumber','category'])],
         controller.addTrainer
     );
 

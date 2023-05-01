@@ -1,6 +1,6 @@
 require('dotenv').config();
 const controller = require("../controllers/activity.controller");
-const { authJwt } = require("../middlewares");
+const { authJwt, checkRequiredFields } = require("../middlewares");
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -11,7 +11,7 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/activity", [authJwt.verifyToken],
+        "/api/activity", [authJwt.verifyToken, checkRequiredFields(['userId'])],
         controller.addActivity
     );
 

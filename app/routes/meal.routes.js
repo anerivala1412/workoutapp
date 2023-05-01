@@ -1,6 +1,6 @@
 require('dotenv').config();
 const controller = require("../controllers/meal.controller");
-const { authJwt } = require("../middlewares");
+const { authJwt, checkRequiredFields } = require("../middlewares");
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -11,7 +11,7 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/meal", [authJwt.verifyToken, authJwt.isUser],
+        "/api/meal", [authJwt.verifyToken, authJwt.isUser, checkRequiredFields(['name','image','calories','carbs','fat','proteine','mealType','ingredients'])],
         controller.addMeal
     );
 
