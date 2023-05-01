@@ -29,7 +29,7 @@ module.exports = function(app) {
     );
 
     //image-upload end-point
-    app.post('/:id/add-profile-picture', function(req, res) {
+    app.post('/:id/add-profile-picture',[authJwt.verifyToken], function(req, res) {
         singleImageUpload(req, res, function(err, some) {
             if (err) {
                 return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
@@ -40,7 +40,7 @@ module.exports = function(app) {
     });
 
     //video-upload end-point
-    app.post('/:id/add-profile-video', function(req, res) {
+    app.post('/:id/add-profile-video',[authJwt.verifyToken], function(req, res) {
         singleVideoUpload(req, res, function(err, some) {
             if (err) {
                 return res.status(422).send({ errors: [{ title: 'video Upload Error', detail: err.message }] });

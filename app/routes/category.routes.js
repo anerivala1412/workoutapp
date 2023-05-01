@@ -1,6 +1,6 @@
 require('dotenv').config();
 const controller = require("../controllers/category.controller");
-const { authJwt } = require("../middlewares");
+const { authJwt, checkRequiredFields } = require("../middlewares");
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -11,7 +11,7 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/category", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/category", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['title','image'])],
         controller.addCategory
     );
 

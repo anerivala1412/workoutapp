@@ -3,18 +3,29 @@ const mongoose = require("mongoose");
 const Training = mongoose.model(
     "Training",
     new mongoose.Schema({
-        image: String,
-        name: String,
-        timing: Date,
+        image: {
+            type: String,
+            required: true
+        },
+        name:  {
+            type: String,
+            required: true
+        },
+        timing:  {
+            type: Date,
+            required: true
+        },
         order: Number,
         stage: {
             type: String,
             enum: ['Beginner', 'Intermediate ', "Advance"],
-            default: 'Beginner'
+            default: 'Beginner',
+            required: true
         },
         categories: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Category"
+            ref: "Category",
+            required: true
         }]
 
     }, {

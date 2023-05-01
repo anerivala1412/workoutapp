@@ -7,15 +7,18 @@ const Experience = mongoose.model(
         afterImage: String,
         workout: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Training"
+            ref: "Training",
+            required: true
         },
         trainer: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Trainer"
+            ref: "Trainer",
+            required: true
         },
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true
         },
         likes: {
             type: Number,

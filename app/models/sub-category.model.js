@@ -3,12 +3,19 @@ const mongoose = require("mongoose");
 const SubCategory = mongoose.model(
     "SubCategory",
     new mongoose.Schema({
-        title: String,
+        title:  {
+            type: String,
+            required: true
+        },
         order: Number,
-        image: String,
+        image:  {
+            type: String,
+            required: true
+        },
         parentCategory: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Category"
+            ref: "Category",
+            required: true
         },
 
     }, {

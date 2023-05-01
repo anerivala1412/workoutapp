@@ -16,14 +16,13 @@ function validateEmail(email) {
     if (!requestedEmail) return 'A valid e-mail address is requred';
     var filteredEmail = requestedEmail[1].toLowerCase()
     let validorNot;
-    for (var i = 0; i < validDomainList.length; i++) {
-        if (filteredEmail == validDomainList[i]) {
+    
+        if(validDomainList.includes(filteredEmail)){  
             return validorNot = true
         } else {
             return validorNot = false
         }
-    }
-
+    
     return validorNot;
 }
 const BaseService = {

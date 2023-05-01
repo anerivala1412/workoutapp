@@ -43,7 +43,7 @@ exports.signup = async(req, res) => {
                             return;
                         }
 
-                        res.send({ message: "User was registered successfully!" });
+                        res.send({ message: "User is registered successfully!" });
                     });
                 }
             );
@@ -61,7 +61,7 @@ exports.signup = async(req, res) => {
                         return;
                     }
 
-                    res.send({ message: "User was registered successfully!" });
+                    res.send({ message: "User is registered successfully!" });
                 });
             });
         }

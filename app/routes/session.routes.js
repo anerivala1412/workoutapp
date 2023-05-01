@@ -1,6 +1,6 @@
 require('dotenv').config();
 const controller = require("../controllers/session.controller");
-const { authJwt } = require("../middlewares");
+const { authJwt, checkRequiredFields } = require("../middlewares");
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -11,7 +11,7 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/session", [authJwt.verifyToken, authJwt.isAdmin],
+        "/api/session", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['title'],'bodyType','stage','seat','startDateTime','description','cost','author','tumbnail','image','videoUrl')],
         controller.addSession
     );
 

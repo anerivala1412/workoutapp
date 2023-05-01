@@ -3,10 +3,19 @@ const mongoose = require("mongoose");
 const EStore = mongoose.model(
     "EStore",
     new mongoose.Schema({
-        title: String,
-        description: String,
+        title:  {
+            type: String,
+            required: true
+        },
+        description:  {
+            type: String,
+            required: true
+        },
         order: Number,
-        image: String,
+        image: {
+            type: String,
+            required: true
+        },
     }, {
         timestamps: true
     })
