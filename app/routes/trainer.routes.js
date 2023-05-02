@@ -1,6 +1,8 @@
 require('dotenv').config();
 const controller = require("../controllers/trainer.controller");
 const { authJwt, checkRequiredFields } = require("../middlewares");
+const mediaUpload = require('../middlewares/media');
+const singleImageUpload = mediaUpload.imageUpload.single('image');
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
