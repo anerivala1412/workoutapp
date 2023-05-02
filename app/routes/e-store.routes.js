@@ -1,6 +1,8 @@
 require('dotenv').config();
 const controller = require("../controllers/e-store.controller");
 const { authJwt, checkRequiredFields } = require("../middlewares");
+const mediaUpload = require('../middlewares/media');
+const singleImageUpload = mediaUpload.imageUpload.single('image');
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -8,6 +10,16 @@ module.exports = function(app) {
             "Origin, Content-Type, Accept"
         );
         next();
+    });
+    //image-upload end-point
+    app.post('/api/add-Estore-picture',[authJwt.verifyToken, authJwt.isAdmin], function(req, res) {
+        singleImageUpload(req, res, function(err, some) {
+            if (err) {
+                return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
+            }
+
+            return res.json({ 'image': req.file.key });
+        });
     });
 
     app.post(

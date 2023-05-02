@@ -11,7 +11,7 @@ module.exports = function(app) {
     });
 
     app.post(
-        "/api/experience", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['workout','trainer','user',''])],
+        "/api/experience", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['workout','trainer','user'])],
         controller.addExperience
     );
 
