@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
+const storageUrl = process.env.S3_URL 
 
 const BaseService = require("../core/base.service");
 const Meal = db.Meal;
@@ -60,8 +61,12 @@ exports.getMeal = (req, res) => {
                 res.status(500).send({ message: err });
                 return;
             }
+            const { image, ...rest } = meal._doc;
+            const imageUrl = `${storageUrl}/${image}`;
+            const items = { ...rest, imageUrl };
+            
             return res.status(200).send({
-                ...meal
+                items
             });
         })
 }

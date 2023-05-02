@@ -9,7 +9,16 @@ module.exports = function(app) {
         );
         next();
     });
+    //image-upload end-point
+    app.post('/api/add-session-picture',[authJwt.verifyToken, authJwt.isAdmin], function(req, res) {
+        singleImageUpload(req, res, function(err, some) {
+            if (err) {
+                return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
+            }
 
+            return res.json({ 'image': req.file.key });
+        });
+    });
     app.post(
         "/api/session", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['title'],'bodyType','stage','seat','startDateTime','description','cost','author','tumbnail','image','videoUrl')],
         controller.addSession

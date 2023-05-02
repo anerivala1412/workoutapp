@@ -9,6 +9,16 @@ module.exports = function(app) {
         );
         next();
     });
+    //image-upload end-point
+    app.post('/add-category-picture',[authJwt.verifyToken], function(req, res) {
+    singleImageUpload(req, res, function(err, some) {
+        if (err) {
+            return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
+        }
+
+        return res.json({ 'image': req.file.key });
+    });
+});
 
     app.post(
         "/api/category", [authJwt.verifyToken, authJwt.isAdmin, checkRequiredFields(['title','image'])],

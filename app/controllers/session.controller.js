@@ -2,6 +2,8 @@ const { ObjectId } = require("mongodb");
 const BaseService = require("../core/base.service");
 const db = require("../models");
 const Session = db.Session
+const storageUrl = process.env.S3_URL 
+
 exports.addSession = (req, res) => {
     const requestObj = req.body;
     const categoryInfo = new Session(requestObj);
@@ -61,8 +63,11 @@ exports.getSession = (req, res) => {
                 res.status(500).send({ message: err });
                 return;
             }
+            const { image, ...rest } = session._doc;
+            const imageUrl = `${storageUrl}/${image}`;
+            const items = { ...rest, imageUrl };
             return res.status(200).send({
-                ...session._doc
+                items
             });
         })
 }
@@ -94,7 +99,13 @@ exports.getSessionList = async(req, res) => {
                 }},
               { $project: { authorr: 0 } },)
 
-        const items = await Session.aggregate(query);
+        const lists = await Session.aggregate(query);
+        const items = lists.reduce((acc, list) => {
+            const { image, ...rest } = list;
+            const imageUrl = `${storageUrl}/${image}`;
+            acc.push({ ...rest, imageUrl });
+            return acc;
+        }, []);
         return res.status(200).send({
             items,
             total: items.length

@@ -2,7 +2,8 @@ const { ObjectId } = require("mongodb");
 const db = require("../models");
 const Trainer = require("../models/trainer.model");
 const BaseService = require("../core/base.service");
-const Training = db.Training;
+const Training = db.Training
+const storageUrl = process.env.S3_URL
 exports.addTraining = (req, res) => {
     const requestObj = req.body;
     const trainingInfo = new Training(requestObj);
@@ -53,20 +54,29 @@ exports.getTraining = (req, res) => {
     const id = req.params.id;
     Training.findById({
             _id: new ObjectId(id)
-        })
+        }).populate('categories','title')
         .exec((err, training) => {
             if (err) {
                 res.status(500).send({ message: err });
                 return;
             }
+            const { image, ...rest } = training._doc;
+            const imageUrl = `${storageUrl}/${image}`;
+            const items = { ...rest, imageUrl };
             return res.status(200).send({
-                ...training
+                items
             });
         })
 }
 
 exports.getTrainingList = async(req, res) => {
-    const items = await Training.find().populate('categories');
+    const lists = await Training.find().populate('categories','title');
+    const items = lists.reduce((acc, list) => {
+        const { image, ...rest } = list._doc;
+        const imageUrl = `${storageUrl}/${image}`;
+        acc.push({ ...rest, imageUrl });
+        return acc;
+    }, []);
     return res.status(200).send({
         items,
         total: items.length

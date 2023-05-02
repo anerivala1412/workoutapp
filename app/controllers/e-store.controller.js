@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
 const EStore = db.EStore
+const storageUrl = process.env.S3_URL 
 exports.addEStore = (req, res) => {
     const requestObj = req.body;
     const eStoreInfo = new EStore(requestObj);
@@ -52,20 +53,29 @@ exports.getEStore = (req, res) => {
     EStore.findById({
             _id: new ObjectId(id)
         })
-        .exec((err, catgory) => {
+        .exec((err, estore) => {
             if (err) {
                 res.status(500).send({ message: err });
                 return;
             }
+            const { image, ...rest } = estore._doc;
+            const imageUrl = `${storageUrl}/${image}`;
+            const items = { ...rest, imageUrl };
             return res.status(200).send({
-                ...catgory
+                items
             });
         })
 }
 
 exports.getEStoreList = async(req, res) => {
     try {
-        const items = await EStore.find();
+        const lists = await EStore.find();
+        const items = lists.reduce((acc, list) => {
+            const { image, ...rest } = list._doc;
+            const imageUrl = `${storageUrl}/${image}`;
+            acc.push({ ...rest, imageUrl });
+            return acc;
+        }, []);
         return res.status(200).send({
             items,
             total: items.length
