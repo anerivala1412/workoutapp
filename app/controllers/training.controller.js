@@ -3,7 +3,6 @@ const db = require("../models");
 const Trainer = require("../models/trainer.model");
 const BaseService = require("../core/base.service");
 const Training = db.Training
-const storageUrl = process.env.S3_URL
 exports.addTraining = (req, res) => {
     const requestObj = req.body;
     const trainingInfo = new Training(requestObj);
@@ -13,7 +12,7 @@ exports.addTraining = (req, res) => {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "Training created successfully!" });;
+        return res.send({ message: "Training created successfully!" });
     });
 };
 
@@ -61,7 +60,7 @@ exports.getTraining = (req, res) => {
                 return;
             }
             const { image, ...rest } = training._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl = BaseService.awsImageUrl(image);
             const items = { ...rest, imageUrl };
             return res.status(200).send({
                 items
@@ -73,7 +72,7 @@ exports.getTrainingList = async(req, res) => {
     const lists = await Training.find().populate('categories','title');
     const items = lists.reduce((acc, list) => {
         const { image, ...rest } = list._doc;
-        const imageUrl = `${storageUrl}/${image}`;
+        const imageUrl = BaseService.awsImageUrl(image);
         acc.push({ ...rest, imageUrl });
         return acc;
     }, []);

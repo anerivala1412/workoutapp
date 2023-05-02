@@ -1,6 +1,6 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
-const storageUrl = process.env.S3_URL 
+const BaseService = require("../core/base.service"); 
 
 const SubCategory = db.SubCategory
 exports.addSubCategory = (req, res) => {
@@ -12,7 +12,7 @@ exports.addSubCategory = (req, res) => {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "SubCategory created successfully!" });;
+        return res.send({ message: "SubCategory created successfully!" });
     });
 };
 
@@ -60,7 +60,7 @@ exports.getSubCategory = (req, res) => {
                 return;
             }
             const { image, ...rest } = catgory._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl = BaseService.awsImageUrl(image);
             const items = { ...rest, imageUrl };
             return res.status(200).send({
                 items
@@ -73,7 +73,7 @@ exports.getSubCategoryList = async(req, res) => {
     const lists = await SubCategory.find();
     const items = lists.reduce((acc, list) => {
         const { image, ...rest } = list._doc;
-        const imageUrl = `${storageUrl}/${image}`;
+        const imageUrl = BaseService.awsImageUrl(image);
         acc.push({ ...rest, imageUrl });
         return acc;
     }, []);

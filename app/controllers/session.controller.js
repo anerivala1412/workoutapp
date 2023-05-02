@@ -2,7 +2,6 @@ const { ObjectId } = require("mongodb");
 const BaseService = require("../core/base.service");
 const db = require("../models");
 const Session = db.Session
-const storageUrl = process.env.S3_URL 
 
 exports.addSession = (req, res) => {
     const requestObj = req.body;
@@ -13,7 +12,7 @@ exports.addSession = (req, res) => {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "Session created successfully!" });;
+        return res.send({ message: "Session created successfully!" });
     });
 };
 
@@ -64,7 +63,7 @@ exports.getSession = (req, res) => {
                 return;
             }
             const { image, ...rest } = session._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl = BaseService.awsImageUrl(image);
             const items = { ...rest, imageUrl };
             return res.status(200).send({
                 items
@@ -101,9 +100,10 @@ exports.getSessionList = async(req, res) => {
 
         const lists = await Session.aggregate(query);
         const items = lists.reduce((acc, list) => {
-            const { image, ...rest } = list;
-            const imageUrl = `${storageUrl}/${image}`;
-            acc.push({ ...rest, imageUrl });
+            const { image, tumbnail, ...rest } = list;
+            const imageUrl = BaseService.awsImageUrl(image);
+            const tumbnailUrl = BaseService.awsImageUrl(tumbnail);
+            acc.push({ ...rest, imageUrl, tumbnailUrl });
             return acc;
         }, []);
         return res.status(200).send({

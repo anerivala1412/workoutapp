@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
+const BaseService = require("../core/base.service");
 const Category = db.category
 const storageUrl = process.env.S3_URL 
 exports.addCategory = (req, res) => {
@@ -11,7 +12,7 @@ exports.addCategory = (req, res) => {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "Category created successfully!" });;
+        return res.send({ message: "Category created successfully!" });
     });
 };
 
@@ -59,7 +60,7 @@ exports.getCategory = (req, res) => {
                 return;
             }
             const { image, ...rest } = catgory._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl = BaseService.awsImageUrl(image);
             const items = { ...rest, imageUrl };
             return res.status(200).send({
                 items
@@ -72,7 +73,7 @@ exports.getCategoryList = async(req, res) => {
         const lists = await Category.find();
         const items = lists.reduce((acc, list) => {
             const { image, ...rest } = list.toObject();
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl = BaseService.awsImageUrl(image);
             acc.push({ ...rest, imageUrl });
             return acc;
         }, []);

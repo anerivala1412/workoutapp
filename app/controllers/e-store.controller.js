@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
 const EStore = db.EStore
-const storageUrl = process.env.S3_URL 
+const BaseService = require("../core/base.service"); 
 exports.addEStore = (req, res) => {
     const requestObj = req.body;
     const eStoreInfo = new EStore(requestObj);
@@ -11,7 +11,7 @@ exports.addEStore = (req, res) => {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "EStore created successfully!" });;
+        return res.send({ message: "EStore created successfully!" });
     });
 };
 
@@ -59,7 +59,7 @@ exports.getEStore = (req, res) => {
                 return;
             }
             const { image, ...rest } = estore._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl =  BaseService.awsImageUrl(image);
             const items = { ...rest, imageUrl };
             return res.status(200).send({
                 items
@@ -72,7 +72,7 @@ exports.getEStoreList = async(req, res) => {
         const lists = await EStore.find();
         const items = lists.reduce((acc, list) => {
             const { image, ...rest } = list._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl =  BaseService.awsImageUrl(image);
             acc.push({ ...rest, imageUrl });
             return acc;
         }, []);

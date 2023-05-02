@@ -25,8 +25,13 @@ function validateEmail(email) {
     
     return validorNot;
 }
+const storageUrl = process.env.S3_URL
+function awsImageUrl(image){
+    return `${storageUrl}/${image}`
+}
 const BaseService = {
     getSkipValue,
-    validateEmail
+    validateEmail,
+    awsImageUrl
 };
 module.exports = BaseService;

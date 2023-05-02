@@ -1,7 +1,5 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
-const storageUrl = process.env.S3_URL 
-
 const BaseService = require("../core/base.service");
 const Meal = db.Meal;
 exports.addMeal = (req, res) => {
@@ -13,7 +11,7 @@ exports.addMeal = (req, res) => {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "Meal created successfully!" });;
+        return res.send({ message: "Meal created successfully!" });
     });
 };
 
@@ -62,7 +60,7 @@ exports.getMeal = (req, res) => {
                 return;
             }
             const { image, ...rest } = meal._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl = BaseService.awsImageUrl(image);
             const items = { ...rest, imageUrl };
             
             return res.status(200).send({

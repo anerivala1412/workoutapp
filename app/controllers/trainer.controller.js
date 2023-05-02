@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
 const db = require("../models");
 const Trainer = db.Trainer
-const storageUrl = process.env.S3_URL
+const BaseService = require("../core/base.service");
 exports.addTrainer = (req, res) => {
     const requestObj = req.body;
     const trainerInfo = new Trainer(requestObj);
@@ -11,7 +11,7 @@ exports.addTrainer = (req, res) => {
             res.status(500).send({ message: err });
             return
         }
-        return res.send({ message: "Trainer created successfully!" });;
+        return res.send({ message: "Trainer created successfully!" });
     });
 };
 
@@ -59,7 +59,7 @@ exports.getTrainer = (req, res) => {
                 return;
             }
             const { image, ...rest } = trainer._doc;
-            const imageUrl = `${storageUrl}/${image}`;
+            const imageUrl = BaseService.awsImageUrl(image);
             const items = { ...rest, imageUrl };
             return res.status(200).send({
                 items
@@ -72,7 +72,7 @@ exports.getTrainerList = async(req, res) => {
     const lists = await Trainer.find().populate('category','title');
     const items = lists.reduce((acc, list) => {
         const { image, ...rest } = list._doc;
-        const imageUrl = `${storageUrl}/${image}`;
+        const imageUrl = BaseService.awsImageUrl(image);
         acc.push({ ...rest, imageUrl });
         return acc;
     }, []);
